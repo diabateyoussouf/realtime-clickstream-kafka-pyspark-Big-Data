@@ -11,7 +11,7 @@ Ce projet est un pipeline de données Big Data en temps réel (Real-Time Data Pi
 
 L'objectif est d'identifier en direct les abandons de panier et de calculer un Score de Propension (probabilité d'achat) pour chaque utilisateur grâce à un moteur de règles métier sous PySpark. Les résultats sont affichés sur un Dashboard Streamlit orienté prise de décision (Business Intelligence).
 
-Performance démontrée : Ce pipeline est capable d'ingérer et de traiter un flux de plus de 10 000 messages par seconde (Test de charge validé sur un dataset de 2 Go, > 15 millions de lignes).
+Performance démontrée : Ce pipeline est capable d'ingérer et de traiter un flux de plus de 10 000 messages par seconde (Test de charge validé sur un dataset de 5 Go, > 15 millions de lignes).
 
 ---
 
@@ -24,7 +24,7 @@ Le flux de données suit une architecture Lambda simplifiée pour le streaming :
 3. Stockage & Checkpointing : Les résultats sont exportés en temps réel dans des fichiers .csv locaux (avec gestion rigoureuse des checkpoints Spark pour la tolérance aux pannes).
 4. Visualisation (Dashboard) : Une application Streamlit multi-onglets surveille le dossier d'export et rafraîchit les KPIs métiers (CA en danger, détection de baleines VIP) de manière asynchrone.
 
-          🗄️ DONNÉES BRUTES (Ton dataset de 2Go / 15M lignes)
+          🗄️ DONNÉES BRUTES (Ton dataset de 5Go / 15M lignes)
                     │
                     ▼
            🚀 LE MUSCLE (apps/producer.py)
