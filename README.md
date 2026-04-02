@@ -24,6 +24,33 @@ Le flux de données suit une architecture Lambda simplifiée pour le streaming :
 3. Stockage & Checkpointing : Les résultats sont exportés en temps réel dans des fichiers .csv locaux (avec gestion rigoureuse des checkpoints Spark pour la tolérance aux pannes).
 4. Visualisation (Dashboard) : Une application Streamlit multi-onglets surveille le dossier d'export et rafraîchit les KPIs métiers (CA en danger, détection de baleines VIP) de manière asynchrone.
 
+🗄️ DONNÉES BRUTES (Ton dataset de 2Go / 15M lignes)
+          │
+          ▼
+ 🚀 LE MUSCLE (apps/producer.py)
+    └─ Rôle : Lit le gros fichier et simule les clics des utilisateurs en direct.
+    └─ Débit : Injecte ~10 000 messages/seconde.
+          │
+          ▼
+ 🐳 LE COEUR RÉSEAU (Docker Compose)
+    ├─ 📨 Apache Kafka : Le "tuyau" haute pression qui reçoit et file d'attente les messages (Topic: clickstream).
+    └─ 🦁 Zookeeper : Le chef d'orchestre qui maintient Kafka en vie.
+          │
+          ▼
+ 🧠 LE CERVEAU (apps/spark_ml_engine.py)
+    └─ Rôle : PySpark Structured Streaming.
+    └─ Action : Se connecte à Kafka, aspire les données toutes les 2 secondes (Micro-batching), détecte les abandons et calcule le fameux "Score de Propension".
+          │
+          ▼
+ 📁 LE STOCKAGE CHAUD (Disque local)
+    ├─ 📄 ./exports_ml/ : Fichiers CSV générés en continu contenant les clients scorés.
+    └─ 🛡️ ./checkpoints_ml/ : La mémoire de Spark (pour reprendre là où il s'est arrêté s'il plante).
+          │
+          ▼
+ 📊 LA VITRINE (apps/dashboard.py)
+    └─ Rôle : Interface Streamlit.
+    └─ Action : Scanne le stockage chaud toutes les 2 secondes, compile les résultats avec Pandas, et affiche la Business Intelligence (CA en danger, Baleines, Graphiques) pour les décideurs.
+
 ---
 
 ## Fonctionnalités Principales
